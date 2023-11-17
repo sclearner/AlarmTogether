@@ -1,7 +1,9 @@
 import 'package:alarmtogether/controllers/bloc/alarm_bloc.dart';
+import 'package:alarmtogether/controllers/firebase_helper/server_data.dart';
 import 'package:alarmtogether/models/alarm.dart';
 import 'package:alarmtogether/views/pages/current_alarm/repeat_selector.dart';
 import 'package:alarmtogether/views/pages/current_alarm/ringtone_selector.dart';
+import 'package:alarmtogether/views/templates/color/colors.dart';
 import 'package:alarmtogether/views/templates/theme/theme.dart';
 import 'package:alarmtogether/controllers/formatters/time_input_formatter.dart';
 import 'package:alarmtogether/views/widgets/time_picker.dart';
@@ -50,15 +52,23 @@ class _CurrentAlarmPageState extends State<CurrentAlarmBody> {
 
   late DateTime _currentTime;
 
+  get _isNew => widget.alarmId == "new";
+
   get lastRepeater =>
       List<bool>.from(context.read<AlarmBloc>().state['isRepeated']);
 
   get lastRingtone => context.read<AlarmBloc>().state['ringTone'];
 
+  Alarm get _alarmRes => context.read<AlarmBloc>().alarm;
+
   VoidCallback _save(BuildContext context) {
-    return () {
-      context.pop(
-          {widget.alarmId: Alarm.fromJson(context.read<AlarmBloc>().state)});
+    return () async {
+      if (_isNew) {
+        ServerData.createAlarm(_alarmRes);
+      } else {
+        ServerData.updateAlarm(widget.alarmId, _alarmRes);
+      }
+      context.pop();
     };
   }
 
@@ -285,12 +295,32 @@ class _CurrentAlarmPageState extends State<CurrentAlarmBody> {
                       const InputDecoration(border: OutlineInputBorder()),
                   keyboardType: TextInputType.multiline,
                   textInputAction: TextInputAction.done,
-                )
+                ),
+                (_isNew)? const SizedBox(): TextButton(onPressed: _delete(context), child: const Text("Delete"))
               ],
             ),
           ),
         )),
       ],
     );
+  }
+
+  VoidCallback _delete(BuildContext context) {
+    return () {
+      showDialog(context: context, builder: (context) {
+        return AlertDialog(
+          title: const Text("Delete alarm"),
+          content: const Text("Are you sure to delete this alarm?"),
+          actions: [
+            TextButton(onPressed: () {context.pop();}, child: const Text("Cancel")),
+            TextButton(onPressed: () {
+              ServerData.deleteAlarm(widget.alarmId);
+              context.pop();
+              context.pop();
+            }, child: const Text("Delete", style: TextStyle(color: AppColors.red)))
+          ],
+        );
+      });
+    };
   }
 }

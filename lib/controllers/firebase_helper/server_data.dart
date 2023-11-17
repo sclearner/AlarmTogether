@@ -5,24 +5,23 @@ import 'database.dart';
 abstract class ServerData {
   //C
   static void createAlarm(Alarm alarm) async {
-    Database.alarmsCollection.add(alarm.toJson());
+    await Database.alarmsCollection.add(alarm.toJson());
   }
 
   //RA
-  static Future<List<Alarm>> readAllAlarm() async {
-    return Database.alarmsCollection.get().then((query) => [
-          for (var doc in query.docs)
-            Alarm.fromJson(doc.data() as Map<String, dynamic>)
-        ]);
+  static Future<Map<String, Alarm>> readAllAlarm() async {
+    return Database.alarmsCollection.get().then((query) => {
+      for (var doc in query.docs) doc.id: Alarm.fromJson(doc.data() as Map<String, dynamic>)
+    });
   }
 
   //U
   static void updateAlarm(String id, Alarm alarm) async {
-    Database.alarmsCollection.doc(id).set(alarm);
+    await Database.alarmsCollection.doc(id).update(alarm.toJson());
   }
 
   //D
   static void deleteAlarm(String id) async {
-    Database.alarmsCollection.doc(id).delete();
+    await Database.alarmsCollection.doc(id).delete();
   }
 }

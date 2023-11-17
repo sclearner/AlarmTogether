@@ -110,6 +110,8 @@ class _ItemListViewState extends State<_ItemListView> {
           ),
           borderRadius: BorderRadius.circular(widget.size * 0.25)),
       child: ListView.builder(
+        itemExtent: widget.size,
+        cacheExtent: widget.size * 3,
         controller: widget.controller,
         physics: ItemScrollPhysics(widget.size),
         padding: EdgeInsets.zero,
