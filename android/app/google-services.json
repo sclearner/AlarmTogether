@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "576007369225",
+    "project_id": "alarm-together",
+    "storage_bucket": "alarm-together.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:576007369225:android:a55dcbbaefc5c03e8ebed8",
+        "android_client_info": {
+          "package_name": "com.coconect.alarmtogether"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCxWq6y0EZP_UlqmRU5QTUSm-H74T53ZPI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
