@@ -1,4 +1,5 @@
 import 'package:alarmtogether/controllers/bloc/alarm_bloc.dart';
+import 'package:alarmtogether/controllers/firebase_helper/authentication.dart';
 import 'package:alarmtogether/controllers/firebase_helper/server_data.dart';
 import 'package:alarmtogether/models/alarm.dart';
 import 'package:alarmtogether/views/pages/current_alarm/repeat_selector.dart';
@@ -63,6 +64,12 @@ class _CurrentAlarmPageState extends State<CurrentAlarmBody> {
 
   VoidCallback _save(BuildContext context) {
     return () async {
+      context.read<AlarmBloc>().state['affectID'].add(Authentication.user!.uid);
+      if (context.read<AlarmBloc>().state['authorID'] == null) {
+        context
+            .read<AlarmBloc>()
+            .changeField('authorID', Authentication.user?.uid);
+      }
       if (_isNew) {
         ServerData.createAlarm(_alarmRes);
       } else {
@@ -296,7 +303,11 @@ class _CurrentAlarmPageState extends State<CurrentAlarmBody> {
                   keyboardType: TextInputType.multiline,
                   textInputAction: TextInputAction.done,
                 ),
-                (_isNew)? const SizedBox(): TextButton(onPressed: _delete(context), child: const Text("Delete"))
+                (_isNew)
+                    ? const SizedBox()
+                    : TextButton(
+                        onPressed: _delete(context),
+                        child: const Text("Delete"))
               ],
             ),
           ),
@@ -307,20 +318,29 @@ class _CurrentAlarmPageState extends State<CurrentAlarmBody> {
 
   VoidCallback _delete(BuildContext context) {
     return () {
-      showDialog(context: context, builder: (context) {
-        return AlertDialog(
-          title: const Text("Delete alarm"),
-          content: const Text("Are you sure to delete this alarm?"),
-          actions: [
-            TextButton(onPressed: () {context.pop();}, child: const Text("Cancel")),
-            TextButton(onPressed: () {
-              ServerData.deleteAlarm(widget.alarmId);
-              context.pop();
-              context.pop();
-            }, child: const Text("Delete", style: TextStyle(color: AppColors.red)))
-          ],
-        );
-      });
+      showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: const Text("Delete alarm"),
+              content: const Text("Are you sure to delete this alarm?"),
+              actions: [
+                TextButton(
+                    onPressed: () {
+                      context.pop();
+                    },
+                    child: const Text("Cancel")),
+                TextButton(
+                    onPressed: () {
+                      ServerData.deleteAlarm(widget.alarmId);
+                      context.pop();
+                      context.pop();
+                    },
+                    child: const Text("Delete",
+                        style: TextStyle(color: AppColors.red)))
+              ],
+            );
+          });
     };
   }
 }

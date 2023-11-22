@@ -11,8 +11,9 @@ Alarm _$AlarmFromJson(Map<String, dynamic> json) => Alarm(
       groupID: json['groupID'] as String?,
       authorID: json['authorID'] as String?,
       affectID: (json['affectID'] as List<dynamic>?)
-          ?.map((e) => e as String)
-          .toList(),
+              ?.map((e) => e as String)
+              .toSet() ??
+          const <String>{},
       time: DateTime.parse(json['time'] as String),
       isRepeated: (json['isRepeated'] as List<dynamic>?)
               ?.map((e) => e as bool)
@@ -26,7 +27,7 @@ Map<String, dynamic> _$AlarmToJson(Alarm instance) => <String, dynamic>{
       'groupID': instance.groupID,
       'authorID': instance.authorID,
       'title': instance.title,
-      'affectID': instance.affectID,
+      'affectID': instance.affectID.toList(),
       'time': instance.time.toIso8601String(),
       'isRepeated': instance.isRepeated,
       'ringTone': instance.ringTone,

@@ -7,7 +7,7 @@ class Alarm {
   final String? groupID;
   final String? authorID;
   final String? title;
-  final List<String>? affectID;
+  final Set<String> affectID;
   final DateTime time;
   final List<bool> isRepeated;
   final String? ringTone;
@@ -17,7 +17,7 @@ class Alarm {
       {this.title,
         this.groupID,
       this.authorID,
-      this.affectID,
+      this.affectID = const <String>{},
       required this.time,
       this.isRepeated = const [false, false, false, false, false, false, false],
       this.ringTone,
